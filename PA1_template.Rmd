@@ -187,7 +187,7 @@ To answer this question, we will need to add a factor variable to our data set t
 activity$weekend <- sapply(activity$day, function(x){if(x == "Saturday" || x == "Sunday"){return("weekend")} else {return("weekday")}})  
 ```
 
-```{r fig.width=11, fig.height=5}
+```{r fig.width=6, fig.height=10}
 
 
 activityq4_wkd <- with(activity[activity$weekend=="weekend",], aggregate(steps_clean, list(interval), mean))
@@ -198,7 +198,7 @@ activityq4_wdy <- with(activity[activity$weekend=="weekday",], aggregate(steps_c
 
 names(activityq4_wdy)<- c("interval", "avgSteps")
 
-par(mfrow=c(1,2))
+par(mfrow=c(2,1))
 
 with(activityq4_wkd, plot(as.POSIXct(interval, format="%H:%M"), avgSteps, type='l', main="Plot of average steps per 5-minute Interval - Weekends", xlab="Interval", ylab="Average number of steps", col="lightblue3"))
 

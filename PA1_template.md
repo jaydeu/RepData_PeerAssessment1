@@ -247,7 +247,7 @@ activityq4_wdy <- with(activity[activity$weekend=="weekday",], aggregate(steps_c
 
 names(activityq4_wdy)<- c("interval", "avgSteps")
 
-par(mfrow=c(1,2))
+par(mfrow=c(2,1))
 
 with(activityq4_wkd, plot(as.POSIXct(interval, format="%H:%M"), avgSteps, type='l', main="Plot of average steps per 5-minute Interval - Weekends", xlab="Interval", ylab="Average number of steps", col="lightblue3"))
 
