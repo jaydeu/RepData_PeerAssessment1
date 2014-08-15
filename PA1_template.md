@@ -3,13 +3,11 @@ Reproducible Research: Peer Assessment 1
 
 
 
-
 This data set includes data recorded by a personal activity monitoring device. The number of steps taken by the subject was recorded in 5 minute intervals for 61 days. The data set includes the following variables:
 
 * steps: The number of steps taken by the individual in a given 5 minute interval, as measured by a personal activity monitoring device.
 * date: The date on which the measurement was taken (YYYY-MM-DD format)
 * interval: A number identifying the 5-minute interval when the measurement was taken, from 0 (12:00am - 12:05am) to 2355 (11:55pm - 12:00am).
-
 
 ## Data Processing
 
@@ -18,6 +16,9 @@ After reading the data set into **R**, we should first look at the structure of 
 
 
 ```r
+# Display options
+options(scipen = 6) 
+
 # Read in data
 activity <- read.csv('activity.csv')
 
@@ -73,19 +74,20 @@ names(activityq1) <- c("date", "steps")
 ggplot(activityq1, aes(x=steps)) + geom_histogram(colour="black", fill="lightblue3", binwidth=2000)+xlab("Total Steps per Day") + ylab("Number of Days") + ggtitle("Histogram of Number of Steps per Day")
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 
 ```r
+options(digits=8)
 summary(activityq1$steps, na.rm=TRUE)
 ```
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-##      41    8840   10800   10800   13300   21200       8
+##      41    8841   10765   10766   13294   21194       8
 ```
 
-From the data summary, we can see that the **mean** number of steps is 10800 per day and the **median** is 10800 steps.
+From the data summary, we can see that the **mean** number of steps is 10766 per day and the **median** is 10765 steps.
 
 It is interesting to note that the **minimum number** of steps was 41. We do not know whether this is an error or not - the subject could have been very sick in bed, or perhaps left the sensor on a table by accident. 
 
@@ -107,7 +109,7 @@ names(activityq2) <- c("interval", "avgSteps")
 with(activityq2, plot(as.POSIXct(interval, format="%H:%M"), avgSteps, type='l', main="Plot of average steps per 5-minute Interval", xlab="Interval", ylab="Average number of steps"))
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
 It looks like there are activity spikes in the morning, at lunch, after work or school and later in the evening. We can also see that a low number of steps occur at night when the subject is presumably sleeping. 
 
@@ -127,7 +129,30 @@ The interval with the highest average number of steps occurs at 08:35 in the mor
 
 ## Question 3: Imputing missing values
 
-There are some missing values in our data set that we want to fill in. One option would be to use the average for each interval, calculated in the previous question. However, first we should check whether there is a big difference between week days.
+
+
+```r
+countNA <- nrow(activity[is.na(activity$steps),])
+countDay <- length(unique(activity[is.na(activity$steps),]$date))
+countNA
+```
+
+```
+## [1] 2304
+```
+
+```r
+countDay
+```
+
+```
+## [1] 8
+```
+ 
+
+There are 2304 missing values in our data set, over 8 days.
+
+We would now like to fill in these missing values. One option would be to use the average for each interval, calculated in the previous question. However, first we should check whether there is a big difference between week days.
 
 
 ```r
@@ -141,14 +166,14 @@ dayAvgs
 ```
 
 ```
-##         day avgSteps
-## 1    Friday 12359.71
-## 2    Monday  9974.86
-## 3  Saturday 12535.43
-## 4    Sunday 12277.71
-## 5  Thursday  8212.75
-## 6   Tuesday  8949.56
-## 7 Wednesday 11790.75
+##         day   avgSteps
+## 1    Friday 12359.7143
+## 2    Monday  9974.8571
+## 3  Saturday 12535.4286
+## 4    Sunday 12277.7143
+## 5  Thursday  8212.7500
+## 6   Tuesday  8949.5556
+## 7 Wednesday 11790.7500
 ```
 
 There goes seem to be quite a large difference between days, so therefore we will estimate the missing values using both the interval and the day of the week. 
@@ -191,15 +216,16 @@ ggplot(activityq3, aes(x=steps)) + geom_histogram(colour="black", fill="goldenro
 
 
 ```r
+options(digits=8)
 summary(activityq3$steps)
 ```
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##      41    8920   11000   10800   12800   21200
+##      41    8918   11015   10821   12811   21194
 ```
 
-How does this affect our mean and median? While our mean stays about the same, the median increases from 10800 to 11000. 
+How does this affect our mean and median? The mean increases from 10766 to 10821, while the median increases from 10765 to 11015. 
 
 
 ## Question 4: Are there differences in activity patterns between weekdays and weekends?

@@ -1,9 +1,6 @@
 Reproducible Research: Peer Assessment 1
 ========================================================
 
-```{r echo=FALSE}
-options(scipen = 6, digits=6) 
-```
 
 
 This data set includes data recorded by a personal activity monitoring device. The number of steps taken by the subject was recorded in 5 minute intervals for 61 days. The data set includes the following variables:
@@ -18,10 +15,15 @@ After reading the data set into **R**, we should first look at the structure of 
 
 
 ```{r}
+
+# Display options
+options(scipen = 6) 
+
 # Read in data
 activity <- read.csv('activity.csv')
 
 str(activity)
+
 ```
 
 
@@ -69,6 +71,7 @@ ggplot(activityq1, aes(x=steps)) + geom_histogram(colour="black", fill="lightblu
 ```
 
 ```{r}
+options(digits=8)
 summary(activityq1$steps, na.rm=TRUE)
 ```
 
@@ -106,7 +109,20 @@ The interval with the highest average number of steps occurs at `r maxSteps` in 
 
 ## Question 3: Imputing missing values
 
-There are some missing values in our data set that we want to fill in. One option would be to use the average for each interval, calculated in the previous question. However, first we should check whether there is a big difference between week days.
+
+```{r}
+
+countNA <- nrow(activity[is.na(activity$steps),])
+countDay <- length(unique(activity[is.na(activity$steps),]$date))
+countNA
+countDay
+
+```
+ 
+
+There are `r countNA` missing values in our data set, over `r countDay` days.
+
+We would now like to fill in these missing values. One option would be to use the average for each interval, calculated in the previous question. However, first we should check whether there is a big difference between week days.
 
 ```{r}
 activityq1$day <- weekdays(activityq1$date)
@@ -156,11 +172,11 @@ ggplot(activityq3, aes(x=steps)) + geom_histogram(colour="black", fill="goldenro
 
 
 ```{r}
-
+options(digits=8)
 summary(activityq3$steps)
 ```
 
-How does this affect our mean and median? While our mean stays about the same, the median increases from `r summary(activityq1$steps)[["Median"]]` to `r summary(activityq3$steps)[["Median"]]`. 
+How does this affect our mean and median? The mean increases from `r summary(activityq1$steps)[["Mean"]]` to `r summary(activityq3$steps)[["Mean"]]`, while the median increases from `r summary(activityq1$steps)[["Median"]]` to `r summary(activityq3$steps)[["Median"]]`. 
 
 
 ## Question 4: Are there differences in activity patterns between weekdays and weekends?
